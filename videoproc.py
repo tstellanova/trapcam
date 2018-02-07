@@ -1,15 +1,12 @@
+#!/usr/bin/env python
+
 import uvc
 import logging
 import time
 logging.basicConfig(level=logging.INFO)
 
-SEGMENT_FRAMES=60
-FILMING_MINUTES = 20
-FILMING_SECONDS = int(FILMING_MINUTES * 60) 
-FILM_DURATION_SECONDS = 30
+SEGMENT_FRAMES=15
 FPS = 30
-TOTAL_FRAMES = int(FPS * FILM_DURATION_SECONDS) 
-INTERFRAME_DELAY_SECS = float(FILMING_SECONDS/TOTAL_FRAMES) 
 
 
 class VideoRecorder:
@@ -23,28 +20,32 @@ class VideoRecorder:
     self.capture = None
         
         
-  def generateTimeFilename(self):
+  def generateTimestampFilename(self):
     timestamp = time.strftime("%G%m%d%H%M%S",time.localtime())
     fname = "{0}-vid.mjpeg".format(timestamp)
     return fname
     
   def openOutputFile(self):
-    fname = self.generateTimeFilename()
+    fname = self.generateTimestampFilename()
     fd = open(fname ,"ab+")
     print("out file open " , fname)
     return fd
 
   def setup(self):
+    """Turn on the camera and be ready to capture video when asked.
+    """
     dev_list =  uvc.device_list()
     # print("devices: ", dev_list)
+    print("video device 0: " , dev_list[0])
     cap = uvc.Capture(dev_list[0]['uid'])
-    #print("modes: ",  cap.avaible_modes)
+    # print("modes: ",  cap.avaible_modes)
     # print(dir(cap))
     # print(dir(cap.controls))
     for counter, value in enumerate(cap.controls):
       print(counter,value)
 
-    cap.frame_mode = (1920, 1080, 30)
+    # cap.frame_mode = (1920, 1080, 30)
+    cap.frame_mode = (640, 480, 30)
 
     # grab one frame to fully spin-up camera
     frame = cap.get_frame_robust()
@@ -55,7 +56,7 @@ class VideoRecorder:
     """Record the given frames as quickly as possible.
     """
     print("recordSegment ", nframes)
-    fname = self.generateTimeFilename()
+    fname = self.generateTimestampFilename()
     with (open(fname ,"ab+")) as fd:
       print("out file open " , fname)
       for i in range(nframes):
@@ -67,9 +68,8 @@ class VideoRecorder:
 
 def main():
   rec = VideoRecorder()
-  rec.recordSegment(TOTAL_FRAMES)
-  print("done writing")
-
+  rec.recordSegment()
+  print("done recording")
 
 if __name__ == '__main__':
   main()
