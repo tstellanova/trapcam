@@ -30,7 +30,7 @@ Since the mini computer I used has multiple cores, I opted to take advantage of 
 
 Depending on your linux configuration you may need to install various audio and video libraries.
 
-- [Setup sounddevice audio capture on Raspberry Pi 3] (https://gist.github.com/tstellanova/11ef60480552e2c5660af8e9e14410c8)
+- [Setup sounddevice audio capture on Raspberry Pi 3](https://gist.github.com/tstellanova/11ef60480552e2c5660af8e9e14410c8)
 - [Setup libuvc video capture on Raspberry Pi 3](https://gist.github.com/tstellanova/1bd93b82f9f9fbc57c7c503a54514d6d)
 - Connect a webcam to your mini computer
 - Run `python3 master.py` and make a loud noise in front of the camera
