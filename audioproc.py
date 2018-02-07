@@ -4,7 +4,8 @@ import time
 
 class AudioRecorder:
   SAMPLE_FREQ = 44100
-  TIME_WINDOW = 100
+  LOUD_NOISE_THRESHOLD = 0.5
+  LOUD_NOISE_DELAY_SECS = 3 # time between loud noises
 
   def __init__(self, name="audioproc", pipe=None):
     self.name = name
@@ -15,8 +16,8 @@ class AudioRecorder:
 
   def recordOne(self):
     duration = 0.1  # seconds
-    samples = sd.rec(int(duration * self.SAMPLE_FREQ),  channels=1)
-    sd.wait() # wait for recording to complete
+    # block until recording finishes
+    samples = sd.rec(int(duration * self.SAMPLE_FREQ),  channels=1, blocking=True)
     max_val = np.amax(samples)
     samples = None
     return (max_val)
@@ -24,12 +25,12 @@ class AudioRecorder:
   def waitForLoudNoise(self):
     while (True):
       peak_val = self.recordOne()
-      if (peak_val > 0.5):
-        print("peak_val: ", peak_val)  
+      if (peak_val > self.LOUD_NOISE_THRESHOLD):
+        # print("peak_val: ", peak_val)
         cur_time = time.time()
         dtime = cur_time - self.last_triggered
-        if (dtime > 3):
-          print(time.strftime("trigger at: %G%m%d%H%M%S",time.localtime()))          
+        if (dtime > self.LOUD_NOISE_DELAY_SECS):
+          # print(time.strftime("trigger at: %G%m%d%H%M%S",time.localtime()))
           self.last_triggered = cur_time
           return True
 
