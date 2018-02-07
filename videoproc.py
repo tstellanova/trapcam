@@ -39,7 +39,10 @@ class VideoRecorder:
     # print("devices: ", dev_list)
     cap = uvc.Capture(dev_list[0]['uid'])
     #print("modes: ",  cap.avaible_modes)
-    #print(dir(cap))
+    # print(dir(cap))
+    # print(dir(cap.controls))
+    for counter, value in enumerate(cap.controls):
+      print(counter,value)
 
     cap.frame_mode = (1920, 1080, 30)
 
